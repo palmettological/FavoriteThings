@@ -24,6 +24,14 @@ public class TextMaster : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        CheckStuff();
+    }
+
+    private void CheckStuff()
+    {
+        if (m_text != null)
+            return;
+
         m_text = GetComponent<TextMeshProUGUI>();
         m_shadowText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
     }
@@ -38,7 +46,16 @@ public class TextMaster : MonoBehaviour
 
             if (Time.time > m_nextShuffle)
             {
-                m_text.text = GameLogic.m_shuffleNames[UnityEngine.Random.Range(0, GameLogic.m_shuffleNames.Count)];
+                int index = UnityEngine.Random.Range(0, GameLogic.m_shuffleNames.Count);
+                if (GameLogic.m_shuffleNames[index] == m_text.text)
+                {
+                    if (index == 0)
+                        index = GameLogic.m_shuffleNames.Count - 1;
+                    else
+                        --index;
+                }
+
+				m_text.text = GameLogic.m_shuffleNames[index];
                 m_nextShuffle = Time.time + m_shuffleInterval;
             }
         }
@@ -74,6 +91,7 @@ public class TextMaster : MonoBehaviour
 
     public void Show(string name)
     {
+        CheckStuff();
         m_shuffleEndTime = m_shuffleStartTime = -1.0f;
         m_targetName = name;
         m_text.text = m_targetName;
@@ -88,6 +106,7 @@ public class TextMaster : MonoBehaviour
 
 	public void ShuffleShow(string name)
 	{
+        CheckStuff();
 		m_targetName = name;
 
 		m_text.text = "";
@@ -105,6 +124,7 @@ public class TextMaster : MonoBehaviour
 
 	public void Hide()
 	{
+        CheckStuff();
 		gameObject.SetActive(false);
 	}
 }

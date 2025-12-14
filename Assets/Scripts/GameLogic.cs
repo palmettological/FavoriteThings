@@ -38,7 +38,13 @@ public class GameLogic : MonoBehaviour
 	public TextMaster m_presenterName;
 	public Transform m_receiverNames;
 
+	public GameObject m_presenter;
+	public GameObject m_recipients;
+	public GameObject m_start;
+	public GameObject m_merryChristmas;
+
 	public int m_seed = -1;
+	public bool m_debug = false;
 
 	private List<Player> m_players = new List<Player>();
 	private Round[] m_rounds;
@@ -74,6 +80,8 @@ public class GameLogic : MonoBehaviour
 
 	void OnGUI()
 	{
+		if (!m_debug)
+			return;
 		if (m_guiStyle == null)
 		{
 			m_guiStyle = new GUIStyle(GUI.skin.label);
@@ -390,11 +398,32 @@ public class GameLogic : MonoBehaviour
 
 	private void ShowRound()
 	{
-		if (m_round < 0 || m_round >= m_rounds.Length)
+		if (m_round < 0)
 		{
-			ClearTheBoard();
+			m_presenter.SetActive(false);
+			m_recipients.SetActive(false);
+			m_start.SetActive(true);
+			m_merryChristmas.SetActive(false);
+			m_round = -1;
+			m_stageCount = 0;
 			return;
 		}
+
+		if (m_round >= m_rounds.Length)
+		{
+			m_presenter.SetActive(false);
+			m_recipients.SetActive(false);
+			m_start.SetActive(false);
+			m_merryChristmas.SetActive(true);
+			m_round = m_rounds.Length;
+			m_stageCount = 0;
+			return;
+		}
+
+		m_presenter.SetActive(true);
+		m_recipients.SetActive(true);
+		m_start.SetActive(false);
+		m_merryChristmas.SetActive(false);
 
 		var round = m_rounds[m_round];
 
